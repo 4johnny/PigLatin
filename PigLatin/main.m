@@ -7,11 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NSString+PigLatinString.h"
+
+#if __has_feature(objc_arc)
+	#define MDLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
+#else
+	#define MDLog(format, ...) CFShow([NSString stringWithFormat:format, ## __VA_ARGS__]);
+#endif
+
 
 int main(int argc, const char * argv[]) {
 	@autoreleasepool {
-	    // insert code here...
-	    NSLog(@"Hello, World!");
+
+		NSString* sentence = @"this awesome sentence is one to be pig-latinized";
+
+		MDLog(@"Sentence: %@", sentence);
+		MDLog(@"PigLatinized: %@", [sentence stringByPigLatinization]);
 	}
     return 0;
 }
