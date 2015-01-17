@@ -19,7 +19,7 @@
 int main(int argc, const char * argv[]) {
 	@autoreleasepool {
 
-		NSString* sentence = @"this awesome sentence is one to be pig-latinized";
+		NSString* sentence = @"please ensure my awesome excellent sentence is pig-latinized";
 
 		MDLog(@"Sentence: %@", sentence);
 		MDLog(@"Pig-Latinized: %@", [sentence stringByPigLatinization]);

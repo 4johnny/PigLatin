@@ -21,15 +21,21 @@
 -(NSString*) pigLatinizeWord {
 
 	NSString* word = self;
-	
+
+	// Find vowels.
 	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"aeiou"];
 	NSRange range = [word rangeOfCharacterFromSet:vowels];
 	
-	if (range.location != NSNotFound) {
-		NSString* consonantsPrefix = [word substringToIndex:range.location];
-		word = [word substringFromIndex:range.location];
-		word = [word stringByAppendingString:consonantsPrefix];
-	}
+	// If no vowels (weird), just append "ay".  We are done.
+	if (range.location == NSNotFound) return [word stringByAppendingString:@"ay"];
+
+	// If word begins with vowel, append "way".  We are done.
+	if (range.location == 0) return [word stringByAppendingString:@"way"];
+
+	// Word begins with consonant prefix.  Move to end of word and append "ay".
+	NSString* consonantsPrefix = [word substringToIndex:range.location];
+	word = [word substringFromIndex:range.location];
+	word = [word stringByAppendingString:consonantsPrefix];
 	
 	return [word stringByAppendingString:@"ay"];
 }
