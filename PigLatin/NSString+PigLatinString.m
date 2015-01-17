@@ -25,8 +25,6 @@
 
 	NSString* word = self;
 	
-	// If word contains no letters, no-op.  We are done.
-	
 	// Find vowels.
 	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"AaEeIiOoUu"];
 	NSRange range = [word rangeOfCharacterFromSet:vowels];
@@ -69,7 +67,7 @@
 -(NSString*) stringByPigLatinization {
 	
 	// Tokenize sentence into array of words.
-	NSArray* words = [[self componentsSeparatedByString:@" "] mutableCopy];
+	NSArray* words = [self componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
 	// Pig-latinize each word and accumulate in new array.
 	NSMutableArray* pigWords = [[NSMutableArray alloc] initWithCapacity:words.count];
