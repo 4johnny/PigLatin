@@ -22,11 +22,13 @@
 @implementation NSString (PigLatinStringPrivate)
 
 -(NSString*) pigLatinizeWord {
-
+	
+	if (self.length <= 0) return self;
+	
 	NSString* word = self;
 	
 	// Find vowels.
-	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"AaEeIiOoUu"];
+	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"AEIOUaeiou"];
 	NSRange range = [word rangeOfCharacterFromSet:vowels];
 	
 	// If no vowels (weird), append "ay".  We are done.
@@ -64,20 +66,49 @@
 
 @implementation NSString (PigLatinString)
 
+-(NSCharacterSet*) toggleCharSet:(NSCharacterSet*) currCharSet {
+	return currCharSet == [NSCharacterSet letterCharacterSet] ?
+	[NSCharacterSet punctuationCharacterSet] : [NSCharacterSet letterCharacterSet];
+}
+
 -(NSString*) stringByPigLatinization {
 	
-	// Tokenize sentence into array of words.
-	NSArray* words = [self componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+	if (self.length <= 0) return self;
+	
+	// Scan alternating sequences of words and punctuation.
+	// Accumulate Pig-Latinized words, while retaining punctuation and whitespace.
+	
+	NSMutableArray* pigLatinWords = [[NSMutableArray alloc] init];
+	NSScanner* scanner = [NSScanner scannerWithString:self];
+	scanner.charactersToBeSkipped = nil; // Manage whitespace ourselves.
+	NSCharacterSet* fromCharSet = [NSCharacterSet letterCharacterSet];
+	
+	while (![scanner isAtEnd]) {
 
-	// Pig-latinize each word and accumulate in new array.
-	NSMutableArray* pigWords = [[NSMutableArray alloc] initWithCapacity:words.count];
-	for (NSString* word in words) {
-		[pigWords addObject:[word pigLatinizeWord]];
+		// Scan any whitespace and store it
+		NSString* word;
+		if ([scanner scanCharactersFromSet:[NSCharacterSet whitespaceCharacterSet] intoString:&word]) {
+			[pigLatinWords addObject:word];
+		}
+		
+		// Scan for letters (or punctuation).
+		// If cannot find, then toggle to punctuation (or letters).
+		if(![scanner scanCharactersFromSet:fromCharSet intoString:&word]) {
+			fromCharSet = [self toggleCharSet:fromCharSet];
+			continue;
+		}
+
+		// If the word is letters, Pig-Latinize it.
+		if (fromCharSet == [NSCharacterSet letterCharacterSet]) {
+			word = [word pigLatinizeWord];
+		}
+		
+		// Store word regardless.
+		[pigLatinWords addObject:word];
 	}
 	
 	// Join words back into sentence.
-	return [pigWords componentsJoinedByString:@" "];
+	return [pigLatinWords componentsJoinedByString:@""];
 }
-
 
 @end
