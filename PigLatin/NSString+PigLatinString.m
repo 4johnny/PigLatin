@@ -8,6 +8,9 @@
 
 #import "NSString+PigLatinString.h"
 
+//
+// Private Category
+//
 
 @interface NSString (PigLatinStringPrivate)
 
@@ -21,27 +24,45 @@
 -(NSString*) pigLatinizeWord {
 
 	NSString* word = self;
-
+	
+	// If word contains no letters, no-op.  We are done.
+	
 	// Find vowels.
-	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"aeiou"];
+	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"AaEeIiOoUu"];
 	NSRange range = [word rangeOfCharacterFromSet:vowels];
 	
-	// If no vowels (weird), just append "ay".  We are done.
+	// If no vowels (weird), append "ay".  We are done.
 	if (range.location == NSNotFound) return [word stringByAppendingString:@"ay"];
 
 	// If word begins with vowel, append "way".  We are done.
 	if (range.location == 0) return [word stringByAppendingString:@"way"];
 
-	// Word begins with consonant prefix.  Move to end of word and append "ay".
-	NSString* consonantsPrefix = [word substringToIndex:range.location];
-	word = [word substringFromIndex:range.location];
-	word = [word stringByAppendingString:consonantsPrefix];
+	// Word begins with consonant prefix.
+
+	// Remember if word is capitalized.
+	BOOL isCapitalized = isupper([word characterAtIndex:0]);
 	
-	return [word stringByAppendingString:@"ay"];
+	// Separate consonant prefix.
+	NSString* consonantPrefix = [word substringToIndex:range.location];
+	word = [word substringFromIndex:range.location];
+	
+	// Move consonant prefix to end, and append "ay".
+	word = [word stringByAppendingString:consonantPrefix];
+	word = [word stringByAppendingString:@"ay"];
+	
+	// Re-capitalize if necessary.
+	if (isCapitalized) {
+		word = [word capitalizedString];
+	}
+	return word;
 }
 
 @end
 
+
+//
+// Public Category
+//
 
 @implementation NSString (PigLatinString)
 
