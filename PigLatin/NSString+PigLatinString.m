@@ -9,9 +9,18 @@
 #import "NSString+PigLatinString.h"
 
 
-@implementation NSString (PigLatinString)
+@interface NSString (PigLatinStringPrivate)
 
--(NSString*) pigLatinizeWord:(NSString*) word {
+-(NSString*) pigLatinizeWord;
+
+@end
+
+	
+@implementation NSString (PigLatinStringPrivate)
+
+-(NSString*) pigLatinizeWord {
+
+	NSString* word = self;
 	
 	NSCharacterSet* vowels = [NSCharacterSet characterSetWithCharactersInString:@"aeiou"];
 	NSRange range = [word rangeOfCharacterFromSet:vowels];
@@ -25,6 +34,11 @@
 	return [word stringByAppendingString:@"ay"];
 }
 
+@end
+
+
+@implementation NSString (PigLatinString)
+
 -(NSString*) stringByPigLatinization {
 	
 	// Tokenize sentence into array of words.
@@ -33,7 +47,7 @@
 	// Pig-latinize each word and accumulate in new array.
 	NSMutableArray* pigWords = [[NSMutableArray alloc] initWithCapacity:words.count];
 	for (NSString* word in words) {
-		[pigWords addObject:[self pigLatinizeWord:word]];
+		[pigWords addObject:[word pigLatinizeWord]];
 	}
 	
 	// Join words back into sentence.

@@ -22,7 +22,7 @@ int main(int argc, const char * argv[]) {
 		NSString* sentence = @"this awesome sentence is one to be pig-latinized";
 
 		MDLog(@"Sentence: %@", sentence);
-		MDLog(@"PigLatinized: %@", [sentence stringByPigLatinization]);
+		MDLog(@"Pig-Latinized: %@", [sentence stringByPigLatinization]);
 	}
     return 0;
 }
